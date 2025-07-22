@@ -26,8 +26,14 @@ public class AccountServiceImpl implements AccountService {
     public AppUser addNewUser(AppUser appUser) {
         String pw = appUser.getPassword();
         appUser.setPassword(passwordEncoder.encode(pw));
+        AppRole userRole = appRoleRepository.findByRoleName("USER");
+        if (userRole == null) {
+            userRole = appRoleRepository.save(new AppRole(null, "USER"));
+        }
+        appUser.getAppRoles().add(userRole);
         return appUserRepository.save(appUser);
     }
+
 
     @Override
     public AppRole addNewRole(AppRole appRole) {
@@ -39,6 +45,7 @@ public class AccountServiceImpl implements AccountService {
         AppUser appUser = appUserRepository.findByUsername(username);
         AppRole appRole = appRoleRepository.findByRoleName(roleName);
         appUser.getAppRoles().add(appRole);
+
 
     }
 

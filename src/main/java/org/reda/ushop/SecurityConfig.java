@@ -1,26 +1,28 @@
 package org.reda.ushop;
-
-import lombok.RequiredArgsConstructor;
 import org.reda.ushop.entities.AppUser;
+import org.reda.ushop.filter.JwtAuthenFilter;
+import org.reda.ushop.filter.JwtAuthorizationFilter;
 import org.reda.ushop.shop.services.AccountService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.*;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class SecurityConfig  {
 
     private  AccountService accountService;
 
@@ -29,16 +31,30 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,AuthenticationManager authenticationManager) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
+                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/h2-console/**","/refreshToken/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form.permitAll()) // Utilise le formulaire de login par défaut de Spring
-                .build();
+                //.formLogin(form -> form.permitAll()) // Utilise le formulaire de login par défaut de Spring
+                .addFilter(new JwtAuthenFilter(authenticationManager))
+                .addFilterBefore(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+
+                .cors(cors -> cors.configurationSource(request -> {
+                var corsConfig = new CorsConfiguration();
+                corsConfig.setAllowedOrigins(List.of("http://localhost:3000"));
+                corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                corsConfig.setAllowedHeaders(List.of("*"));
+                corsConfig.setAllowCredentials(true);
+                return corsConfig;
+        }))
+
+        .build();
     }
 
     @Bean
