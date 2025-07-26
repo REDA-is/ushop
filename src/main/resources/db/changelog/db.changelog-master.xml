@@ -7,7 +7,7 @@
           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.23.xsd">
 
 
-    <changeSet id="0001-create-app-role" author="you">
+    <changeSet id="0001-create-app-role" author="REDA">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="app_role"/>
@@ -16,7 +16,7 @@
         <sqlFile path="db/changelog/sql/create_app_role.sql" relativeToChangelogFile="true"/>
     </changeSet>
 
-    <changeSet id="0002-create-app-user" author="you">
+    <changeSet id="0002-create-app-user" author="REDA">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="app_user"/>
@@ -25,7 +25,7 @@
         <sqlFile path="db/changelog/sql/create_app_user.sql" relativeToChangelogFile="true"/>
     </changeSet>
 
-    <changeSet id="0003-create-app-user-app-roles" author="you">
+    <changeSet id="0003-create-app-user-app-roles" author="REDA">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="app_user_app_roles"/>
@@ -35,21 +35,21 @@
     </changeSet>
 
 
-    <changeSet id="0004-seed-roles" author="you" context="dev">
+    <changeSet id="0004-seed-roles" author="REDA" context="dev">
         <preConditions onFail="MARK_RAN">
             <tableIsEmpty tableName="app_role"/>
         </preConditions>
         <sqlFile path="db/changelog/sql/seed_app_role.sql" relativeToChangelogFile="true"/>
     </changeSet>
 
-    <changeSet id="0005-seed-users" author="you" context="dev">
+    <changeSet id="0005-seed-users" author="REDA" context="dev">
         <preConditions onFail="MARK_RAN">
             <tableIsEmpty tableName="app_user"/>
         </preConditions>
         <sqlFile path="db/changelog/sql/seed_app_user.sql" relativeToChangelogFile="true"/>
     </changeSet>
 
-    <changeSet id="0006-seed-user-roles" author="you" context="dev">
+    <changeSet id="0006-seed-user-roles" author="REDA" context="dev">
         <preConditions onFail="MARK_RAN">
             <tableIsEmpty tableName="app_user_app_roles"/>
         </preConditions>
