@@ -1,4 +1,4 @@
-package org.reda.ushop.shop.services;
+package org.reda.ushop.services;
 
 import org.reda.ushop.entities.AppRole;
 import org.reda.ushop.entities.AppUser;
@@ -11,4 +11,8 @@ public interface AccountService {
     void addRoleToUser(String username, String roleName);
     AppUser loadUserByUsername(String username);
     List<AppUser> listUsers();
+    void deleteUserByUsername(String username);
+
+
+
 }

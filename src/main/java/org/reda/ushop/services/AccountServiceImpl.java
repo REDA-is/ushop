@@ -1,9 +1,9 @@
-package org.reda.ushop.shop.services;
+package org.reda.ushop.services;
 
 import org.reda.ushop.entities.AppRole;
 import org.reda.ushop.entities.AppUser;
-import org.reda.ushop.shop.repo.AppRoleRepository;
-import org.reda.ushop.shop.repo.AppUserRepository;
+import org.reda.ushop.repo.AppRoleRepository;
+import org.reda.ushop.repo.AppUserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,4 +58,15 @@ public class AccountServiceImpl implements AccountService {
     public List<AppUser> listUsers() {
         return appUserRepository.findAll();
     }
+    @Override
+    public void deleteUserByUsername(String username) {
+        AppUser user = appUserRepository.findByUsername(username);
+        if (user != null) {
+            appUserRepository.delete(user);
+        } else {
+            throw new RuntimeException("User not found with username: " + username);
+        }
+    }
+
 }
+

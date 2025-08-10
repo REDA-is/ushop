@@ -1,4 +1,4 @@
-package org.reda.ushop.shop.repo;
+package org.reda.ushop.repo;
 
 import org.reda.ushop.entities.AppRole;
 import org.springframework.data.jpa.repository.JpaRepository;

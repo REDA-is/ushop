@@ -1,8 +1,9 @@
 package org.reda.ushop;
+import jakarta.servlet.http.HttpServletResponse;
 import org.reda.ushop.entities.AppUser;
 import org.reda.ushop.filter.JwtAuthenFilter;
 import org.reda.ushop.filter.JwtAuthorizationFilter;
-import org.reda.ushop.shop.services.AccountService;
+import org.reda.ushop.services.AccountService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -37,10 +38,17 @@ public class SecurityConfig  {
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**","/refreshToken/**").permitAll()
+                        .requestMatchers("/refreshToken").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
+
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired or invalid");
+                        })
+                )
+
                 //.formLogin(form -> form.permitAll()) // Utilise le formulaire de login par défaut de Spring
                 .addFilter(new JwtAuthenFilter(authenticationManager))
                 .addFilterBefore(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)

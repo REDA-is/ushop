@@ -10,12 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.reda.ushop.entities.AppRole;
 import org.reda.ushop.entities.AppUser;
 import org.reda.ushop.entities.RoleUserForm;
-import org.reda.ushop.shop.services.AccountService;
+import org.reda.ushop.services.AccountService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,6 +47,12 @@ import java.util.stream.Collectors;
         public void addRoleToUser(@RequestBody RoleUserForm roleUserForm){
             accountService.addRoleToUser(roleUserForm.getUsername(),roleUserForm.getRoleName());
         }
+        @DeleteMapping("/user/{username}")
+        @PostAuthorize("hasAuthority('ADMIN')")
+        public ResponseEntity<String> deleteUser(@PathVariable String username) {
+            accountService.deleteUserByUsername(username);
+                return ResponseEntity.ok("Utilisateur supprimé avec succès");
+    }
         @GetMapping(path="/refreshToken")
         public void refreshToken(HttpServletRequest request, HttpServletResponse response)throws Exception {
             String authTocken = request.getHeader("Authorization");
@@ -86,6 +90,7 @@ import java.util.stream.Collectors;
         }
 
 
-    }
+
+}
 
 
