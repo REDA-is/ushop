@@ -30,7 +30,8 @@ public class Order {
      */
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id") // FK lives in cart_item
-    private List<CartItem> items = new ArrayList<>();
+    private List<OrderItems> items = new ArrayList<>();
+
 
     @PrePersist
     void onCreate() {

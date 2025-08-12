@@ -5,6 +5,7 @@ import org.reda.ushop.services.AppProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/products")
@@ -30,6 +31,10 @@ public class AppProductController {
     @GetMapping("/category/{category}")
     public List<AppProduct>getProductsByCategory(@PathVariable String category) {
         return productService.getProductsByCategory(category);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<AppProduct>> getProductById(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getProductById(id));
     }
 
     @PostMapping

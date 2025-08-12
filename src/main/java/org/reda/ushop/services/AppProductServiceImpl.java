@@ -51,4 +51,8 @@ public class AppProductServiceImpl implements AppProductService {
         appProductRepository.deleteById(id);
 
     }
+    @Override
+    public Optional<AppProduct> getProductById(Long id) {
+        return appProductRepository.findById(id);
+    }
 }

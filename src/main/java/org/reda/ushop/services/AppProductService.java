@@ -12,5 +12,6 @@ public interface AppProductService {
     AppProduct createProduct(AppProduct product);
     AppProduct updateProduct(Long id, AppProduct product);
     void deleteProduct(Long id);
+    Optional<AppProduct> getProductById(Long id);
 }
 
