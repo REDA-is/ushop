@@ -23,16 +23,16 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public CartItem addToCart(CartItem item) {
-        Long productId = item.getProduct().getId();  // ID du produit reçu
+        Long productId = item.getProduct().getId();
 
-        // Charger le produit complet depuis la BDD
+
         AppProduct product = appProductRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Produit introuvable avec id: " + productId));
 
         if (!product.getAvailableQuantities().contains(item.getSelectedQuantity())) {
             throw new IllegalArgumentException("Quantité non disponible pour ce produit.");
         }
-        item.setProduct(product); // important
+        item.setProduct(product);
 
         double total = (product.getPrice() / 100.0) * item.getSelectedQuantity(); // prix pour 100g
         item.setTotalPrice(total);

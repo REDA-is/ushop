@@ -11,4 +11,8 @@ public interface OrderService {
     List<Order> getOrdersForUser(String username);
     void deleteAllOrders();
     void deleteOrderById(Long id);
+
+    void markOrderPaid(Long orderId, String checkoutSessionId, String paymentIntentId,
+                       String currency, Long amountMinor);
+
 }

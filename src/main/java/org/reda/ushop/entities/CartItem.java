@@ -23,7 +23,7 @@ public class CartItem {
     private Integer selectedQuantity;
     private Double totalPrice;
 
-    private String username; //  ajouté pour associer au user
+    private String username;
 
     public CartItem() {}
 

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/orders") // plural is conventional
+@RequestMapping("/api/orders")
 @CrossOrigin
 public class OrderController {
 
@@ -20,15 +20,15 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    // 1) Checkout ALL items in the current user's cart
+
     @PostMapping("/checkout")
-    public ResponseEntity<Order> checkoutAll(Authentication auth) { //  no manual JWT parsing
+    public ResponseEntity<Order> checkoutAll(Authentication auth) {
         String username = auth.getName();
         Order created = orderService.createOrderFromCart(username);
         return ResponseEntity.ok(created);
     }
 
-    // 2) Checkout SELECTED items (send cartIds)
+
     @PostMapping
     public ResponseEntity<Order> checkoutSelected(
             Authentication auth,
@@ -39,13 +39,13 @@ public class OrderController {
         return ResponseEntity.ok(created);
     }
 
-    // 3) My orders (current user)
+
     @GetMapping("/me")
     public List<Order> myOrders(Authentication auth) {
         return orderService.getOrdersForUser(auth.getName());
     }
 
-    // 4) All orders (keep only if ADMIN‑protected elsewhere)
+
     @GetMapping
     public List<Order> getAllOrders() {
         return orderService.getAllOrders();
@@ -53,18 +53,18 @@ public class OrderController {
 
     @DeleteMapping
     public ResponseEntity<Void> deleteAllOrders() {
-        orderService.deleteAllOrders();        // safe version
+        orderService.deleteAllOrders();
         return ResponseEntity.noContent().build();
     }
 
-    // (optional) delete one order
-    @PreAuthorize("hasRole('ADMIN')")
+
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
         orderService.deleteOrderById(id);
         return ResponseEntity.noContent().build();
     }
 
-    // ---- simple request body for selected checkout
+
     public record CartSelection(List<Long> cartIds) {}
 }

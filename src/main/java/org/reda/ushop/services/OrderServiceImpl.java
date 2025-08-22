@@ -113,13 +113,37 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void deleteAllOrders() {
-        orderRepository.deleteAll();           // cascades per-entity, safe
+        orderRepository.deleteAll();
     }
 
     @Override
     @Transactional
     public void deleteOrderById(Long id) {
-        orderRepository.deleteById(id);        // cascades to its items
+        orderRepository.deleteById(id);
     }
+
+
+    @Override
+    @Transactional
+    public void markOrderPaid(Long orderId, String checkoutSessionId, String paymentIntentId,
+                              String currency, Long amountMinor) {
+        Order o = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+
+        if (Boolean.TRUE.equals(o.getPaid())) return;
+
+        o.setPaid(true);
+        o.setCheckoutSessionId(checkoutSessionId);
+        o.setPaymentIntentId(paymentIntentId);
+        o.setCurrency(currency != null ? currency.toLowerCase() : null);
+        o.setAmountMinor(amountMinor);
+        o.setPaidAt(java.time.Instant.now());
+
+        orderRepository.save(o);
+    }
+
+
+
 
 }

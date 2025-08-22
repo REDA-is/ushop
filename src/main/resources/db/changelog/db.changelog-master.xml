@@ -33,6 +33,14 @@
         </preConditions>
         <sqlFile path="db/changelog/sql/create_app_user_app_roles.sql" relativeToChangelogFile="true"/>
     </changeSet>
+    <changeSet id="0007-create-app-product" author="REDA">
+        <preConditions onFail="MARK_RAN">
+            <not>
+            <tableExists tableName="app_product"/>
+            </not>
+        </preConditions>
+        <sqlFile path="db/changelog/sql/create_app_product.sql" relativeToChangelogFile="true"/>
+    </changeSet>
 
 
     <changeSet id="0004-seed-roles" author="REDA" context="dev">
@@ -55,6 +63,100 @@
         </preConditions>
         <sqlFile path="db/changelog/sql/seed_app_user_app_roles.sql" relativeToChangelogFile="true"/>
     </changeSet>
+
+
+    <!-- 0100: create app_product -->
+    <changeSet id="0100-create-app-product" author="REDA">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="app_product"/></not>
+        </preConditions>
+        <createTable tableName="app_product">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="pk_app_product"/>
+            </column>
+            <column name="product_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="price" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image_url" type="VARCHAR(500)"/>
+            <column name="available" type="TINYINT(1)" defaultValueNumeric="1">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- 0101: create quantities table with FK + PK -->
+    <changeSet id="0101-create-app-product-available-quantities" author="REDA">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="app_product_available_quantities"/></not>
+        </preConditions>
+        <createTable tableName="app_product_available_quantities">
+            <column name="app_product_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="available_quantities" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="app_product_available_quantities"
+                       columnNames="app_product_id,available_quantities"
+                       constraintName="pk_app_product_qty"/>
+        <addForeignKeyConstraint constraintName="fk_app_product_qty_product"
+                                 baseTableName="app_product_available_quantities"
+                                 baseColumnNames="app_product_id"
+                                 referencedTableName="app_product"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <!-- 0102: seed products (dev-only) -->
+    <changeSet id="0102-seed-app-product" author="REDA" context="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableIsEmpty tableName="app_product"/>
+        </preConditions>
+        <sqlFile path="db/changelog/sql/seed_app_product.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true"
+                 endDelimiter=";"/>
+    </changeSet>
+
+    <!-- 0103: seed quantities by product name (idempotent) -->
+    <changeSet id="0103-seed-app-product-available-quantities" author="REDA" context="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableIsEmpty tableName="app_product_available_quantities"/>
+        </preConditions>
+        <sqlFile path="db/changelog/sql/seed_app_product_available_quantities.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true"
+                 endDelimiter=";"/>
+    </changeSet>
+
+    <!-- 0104: (optional) drop legacy column if it still exists -->
+    <changeSet id="0104-drop-legacy-available-quantities-col" author="REDA">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="app_product" columnName="available_quantities"/>
+        </preConditions>
+        <dropColumn tableName="app_product" columnName="available_quantities"/>
+    </changeSet>
+    <changeSet id="0010-seed-app-product-quantities-again" author="REDA" context="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="app_product"/>
+            <tableExists tableName="app_product_available_quantities"/>
+        </preConditions>
+        <sqlFile path="db/changelog/sql/seed_app_product_available_quantities.sql"
+                 relativeToChangelogFile="true"/>
+    </changeSet>
+
+
+
 
 
 </databaseChangeLog>

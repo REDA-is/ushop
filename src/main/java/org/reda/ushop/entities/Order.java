@@ -7,9 +7,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+// src/main/java/org/reda/ushop/entities/Order.java
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
-@Table(name = "orders") // avoid reserved word collisions
+@Table(name = "orders")
 public class Order {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,18 +21,22 @@ public class Order {
     private double totalPrice;
 
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
 
-    /**
-     * Unidirectional one-to-many.
-     * Will add an order_id column to cart_item and populate it when the order is saved.
-     * NOTE: leave CartItem without "order" field (no bi‑directional mapping needed).
-     */
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "order_id") // FK lives in cart_item
-    private List<OrderItems> items = new ArrayList<>();
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean paid = false;
 
+    private String checkoutSessionId;
+    private String paymentIntentId;
+    private String currency;
+    private Long amountMinor;
+    private java.time.Instant paidAt;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id")
+    @Builder.Default
+    private List<OrderItems> items = new ArrayList<>();
 
     @PrePersist
     void onCreate() {

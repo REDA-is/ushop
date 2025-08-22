@@ -1,4 +1,4 @@
-package org.reda.ushop;
+package org.reda.ushop.configu;
 import jakarta.servlet.http.HttpServletResponse;
 import org.reda.ushop.entities.AppUser;
 import org.reda.ushop.filter.JwtAuthenFilter;
@@ -38,9 +38,9 @@ public class SecurityConfig  {
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/refreshToken").permitAll()
+                        .requestMatchers("/refreshToken","/api/stripe/webhook").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
-
+                        .requestMatchers(HttpMethod.GET, "/api/payments/session/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex

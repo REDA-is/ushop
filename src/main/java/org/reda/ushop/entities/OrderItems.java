@@ -10,7 +10,7 @@ public class OrderItems {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // snapshot fields so past orders stay stable even if product changes
+
     private Long productId;
     private String productName;
     private String imageUrl;
